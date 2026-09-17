@@ -69,3 +69,25 @@ OnlineJobPortal/
 │
 ├── .gitignore
 └── README.md
+<<<<<<< HEAD
+=======
+## Screenshots
+
+### Home Page
+![Home Page](screenshots/home.png)
+
+### Jobs Page
+![Jobs Page](screenshots/jobs.png)
+
+### Register Page
+![Register Page](screenshots/register.png)
+
+### My Profile
+![My Profile](screenshots/profile.png)
+
+### My Applications
+![My Applications](screenshots/applications.png)
+
+### Admin Dashboard
+![Admin Dashboard](screenshots/admin-dashboard.png)
+>>>>>>> a8a1c62 (Add project screenshots to README)
