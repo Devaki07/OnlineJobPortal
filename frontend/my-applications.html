@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Applications - Online Job Portal</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="style.css">
+
+    <style>
+        /* Application Status */
+
+        .application-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 7px 14px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .status-applied {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-review {
+            background: #cfe2ff;
+            color: #084298;
+        }
+
+        .status-shortlisted {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+
+        .status-rejected {
+            background: #f8d7da;
+            color: #842029;
+        }
+
+        .status-selected {
+            background: #d1e7dd;
+            color: #0f5132;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- =========================
+         NAVIGATION
+    ========================== -->
+
+    <nav>
+
+        <h2>
+            <i class="fa-solid fa-briefcase"></i>
+            Online Job Portal
+        </h2>
+
+        <ul>
+
+            <li>
+                <a href="index.html">
+                    <i class="fa-solid fa-house"></i>
+                    Home
+                </a>
+            </li>
+
+            <li>
+                <a href="jobs.html">
+                    <i class="fa-solid fa-briefcase"></i>
+                    Jobs
+                </a>
+            </li>
+
+            <li>
+                <a href="my-applications.html">
+                    <i class="fa-solid fa-file-lines"></i>
+                    My Applications
+                </a>
+            </li>
+
+            <li>
+                <a href="profile.html">
+                    <i class="fa-solid fa-user"></i>
+                    My Profile
+                </a>
+            </li>
+
+            <li>
+                <a href="#" id="logoutLink">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    Logout
+                </a>
+            </li>
+
+        </ul>
+
+    </nav>
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================== -->
+
+    <main class="container">
+
+        <!-- Welcome -->
+
+        <div style="text-align: center; margin-bottom: 30px;">
+
+            <h2 id="welcomeMessage">
+                Welcome 👋
+            </h2>
+
+        </div>
+
+
+        <!-- Heading -->
+
+        <div class="page-title">
+
+            <h1>
+                <i class="fa-solid fa-file-lines"></i>
+                My Applications
+            </h1>
+
+        </div>
+
+        <p class="page-subtitle">
+            View the jobs you have applied for and track your application status.
+        </p>
+
+
+        <!-- Applications -->
+
+        <div id="applicationsContainer">
+
+            <div class="empty-state">
+
+                <i class="fa-solid fa-spinner"></i>
+
+                <p>
+                    Loading applications...
+                </p>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer>
+
+        <p>
+            © 2026 Online Job Portal.
+            All rights reserved.
+        </p>
+
+    </footer>
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+
+    <script>
+
+        const API_URL = "http://localhost:8080";
+
+
+        /* =========================
+           LOGIN CHECK
+        ========================= */
+
+        const loggedInEmail =
+            localStorage.getItem("loggedInEmail");
+
+        const loggedInName =
+            localStorage.getItem("loggedInName");
+
+
+        if (!loggedInEmail) {
+
+            window.location.href = "login.html";
+
+        }
+
+
+        /* =========================
+           WELCOME MESSAGE
+        ========================= */
+
+        const welcomeMessage =
+            document.getElementById("welcomeMessage");
+
+
+        if (loggedInName) {
+
+            welcomeMessage.innerHTML =
+                `Welcome, ${escapeHtml(loggedInName)} 👋`;
+
+        }
+
+
+        /* =========================
+           GET STATUS CLASS
+        ========================= */
+
+        function getStatusClass(status) {
+
+            const value =
+                String(status || "Applied")
+                    .trim()
+                    .toLowerCase();
+
+            if (value === "under review"
+                || value === "review") {
+
+                return "status-review";
+
+            }
+
+            if (value === "shortlisted") {
+
+                return "status-shortlisted";
+
+            }
+
+            if (value === "rejected") {
+
+                return "status-rejected";
+
+            }
+
+            if (value === "selected") {
+
+                return "status-selected";
+
+            }
+
+            return "status-applied";
+        }
+
+
+        /* =========================
+           GET STATUS ICON
+        ========================= */
+
+        function getStatusIcon(status) {
+
+            const value =
+                String(status || "Applied")
+                    .trim()
+                    .toLowerCase();
+
+            if (value === "under review"
+                || value === "review") {
+
+                return "fa-magnifying-glass";
+
+            }
+
+            if (value === "shortlisted") {
+
+                return "fa-star";
+
+            }
+
+            if (value === "rejected") {
+
+                return "fa-xmark";
+
+            }
+
+            if (value === "selected") {
+
+                return "fa-circle-check";
+
+            }
+
+            return "fa-check";
+        }
+
+
+        /* =========================
+           LOAD APPLICATIONS
+        ========================== */
+
+        async function loadApplications() {
+
+            const container =
+                document.getElementById(
+                    "applicationsContainer"
+                );
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        `${API_URL}/applications?email=${encodeURIComponent(loggedInEmail)}`
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Failed to load applications"
+                    );
+
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                /*
+                 * Backend returns a direct array.
+                 */
+
+                if (!data ||
+                    data.length === 0) {
+
+                    container.innerHTML = `
+
+                        <div class="empty-state">
+
+                            <i class="fa-solid fa-file-circle-xmark"></i>
+
+                            <h3>
+                                No Applications Yet
+                            </h3>
+
+                            <p>
+                                You have not applied for any jobs yet.
+                            </p>
+
+                            <br>
+
+                            <a href="jobs.html" class="btn">
+
+                                <i class="fa-solid fa-briefcase"></i>
+                                Browse Jobs
+
+                            </a>
+
+                        </div>
+
+                    `;
+
+                    return;
+
+                }
+
+
+                container.innerHTML = "";
+
+
+                data.forEach(application => {
+
+                    const card =
+                        document.createElement("div");
+
+
+                    card.className =
+                        "application-card";
+
+
+                    // Get status from backend
+
+                    const status =
+                        application.status || "Applied";
+
+
+                    const statusClass =
+                        getStatusClass(status);
+
+
+                    const statusIcon =
+                        getStatusIcon(status);
+
+
+                    card.innerHTML = `
+
+                        <h3>
+                            <i class="fa-solid fa-briefcase"></i>
+                            ${escapeHtml(application.title)}
+                        </h3>
+
+                        <p>
+
+                            <span class="application-status ${statusClass}">
+
+                                <i class="fa-solid ${statusIcon}"></i>
+
+                                ${escapeHtml(status)}
+
+                            </span>
+
+                        </p>
+
+                        <p>
+                            <strong>
+                                <i class="fa-solid fa-building"></i>
+                                Company:
+                            </strong>
+                            ${escapeHtml(application.company)}
+                        </p>
+
+                        <p>
+                            <strong>
+                                <i class="fa-solid fa-location-dot"></i>
+                                Location:
+                            </strong>
+                            ${escapeHtml(application.location)}
+                        </p>
+
+                        <p>
+                            <strong>
+                                <i class="fa-solid fa-user-clock"></i>
+                                Experience:
+                            </strong>
+                            ${escapeHtml(application.experience)}
+                        </p>
+
+                        <p>
+                            <strong>
+                                <i class="fa-solid fa-user"></i>
+                                Applicant:
+                            </strong>
+                            ${escapeHtml(application.applicantName)}
+                        </p>
+
+                        <p>
+                            <strong>
+                                <i class="fa-solid fa-envelope"></i>
+                                Email:
+                            </strong>
+                            ${escapeHtml(application.applicantEmail)}
+                        </p>
+
+                        <p>
+                            <strong>
+                                <i class="fa-solid fa-calendar-days"></i>
+                                Applied On:
+                            </strong>
+                            ${escapeHtml(application.appliedAt)}
+                        </p>
+
+                    `;
+
+
+                    container.appendChild(card);
+
+                });
+
+
+            } catch (error) {
+
+                console.error(error);
+
+
+                container.innerHTML = `
+
+                    <div class="empty-state">
+
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+
+                        <h3>
+                            Unable to Load Applications
+                        </h3>
+
+                        <p>
+                            Please make sure the backend server is running.
+                        </p>
+
+                    </div>
+
+                `;
+
+            }
+
+        }
+
+
+        /* =========================
+           LOGOUT
+        ========================== */
+
+        document
+            .getElementById("logoutLink")
+            .addEventListener(
+                "click",
+                function (event) {
+
+                    event.preventDefault();
+
+
+                    localStorage.removeItem(
+                        "loggedInEmail"
+                    );
+
+                    localStorage.removeItem(
+                        "loggedInName"
+                    );
+
+                    localStorage.removeItem(
+                        "loggedInRole"
+                    );
+
+                    localStorage.removeItem(
+                        "loggedInUserId"
+                    );
+
+
+                    window.location.href =
+                        "index.html";
+
+                }
+            );
+
+
+        /* =========================
+           HTML ESCAPE
+        ========================== */
+
+        function escapeHtml(value) {
+
+            if (value === null ||
+                value === undefined) {
+
+                return "";
+
+            }
+
+
+            return String(value)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+
+        }
+
+
+        /* =========================
+           START
+        ========================== */
+
+        loadApplications();
+
+    </script>
+
+</body>
+
+</html>
+

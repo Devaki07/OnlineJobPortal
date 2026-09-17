@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Jobs - Online Job Portal</title>
+
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+
+    <!-- Main CSS -->
+    <link rel="stylesheet"
+          href="style.css">
+
+</head>
+
+
+<body>
+
+
+    <!-- =========================
+         NAVIGATION
+    ========================== -->
+
+    <nav>
+
+        <h2>
+
+            <i class="fa-solid fa-briefcase"></i>
+
+            Online Job Portal
+
+        </h2>
+
+
+        <!-- Navigation is created by JavaScript -->
+
+        <ul id="navigationMenu">
+
+        </ul>
+
+    </nav>
+
+
+
+    <!-- =========================
+         MAIN CONTENT
+    ========================== -->
+
+    <main class="container">
+
+
+        <!-- =========================
+             WELCOME MESSAGE
+        ========================== -->
+
+        <div style="text-align: center; margin-bottom: 30px;">
+
+            <h2 id="welcomeMessage">
+
+                Welcome 👋
+
+            </h2>
+
+        </div>
+
+
+
+        <!-- =========================
+             PAGE HEADING
+        ========================== -->
+
+        <div class="page-title">
+
+            <h1>
+
+                <i class="fa-solid fa-briefcase"></i>
+
+                Available Jobs
+
+            </h1>
+
+        </div>
+
+
+        <p class="page-subtitle">
+
+            Search and filter available job opportunities.
+
+        </p>
+
+
+
+        <!-- =========================
+             SEARCH & FILTER
+        ========================== -->
+
+        <div class="search-box">
+
+            <div style="
+                display: grid;
+                grid-template-columns: 2fr 1fr 1fr auto auto;
+                gap: 12px;
+                align-items: center;
+            ">
+
+
+                <!-- Keyword -->
+
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search by job title or company..."
+                >
+
+
+
+                <!-- Location -->
+
+                <select id="locationFilter">
+
+                    <option value="">
+
+                        All Locations
+
+                    </option>
+
+                </select>
+
+
+
+                <!-- Experience -->
+
+                <select id="experienceFilter">
+
+                    <option value="">
+
+                        All Experience Levels
+
+                    </option>
+
+                </select>
+
+
+
+                <!-- Search Button -->
+
+                <button id="searchBtn">
+
+                    <i class="fa-solid fa-magnifying-glass"></i>
+
+                    Search
+
+                </button>
+
+
+
+                <!-- Clear Button -->
+
+                <button id="clearBtn">
+
+                    <i class="fa-solid fa-xmark"></i>
+
+                    Clear
+
+                </button>
+
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =========================
+             JOBS
+        ========================== -->
+
+        <div id="jobsContainer"
+             class="jobs-container">
+
+
+            <div class="empty-state">
+
+                <i class="fa-solid fa-spinner"></i>
+
+                <p>
+
+                    Loading jobs...
+
+                </p>
+
+            </div>
+
+        </div>
+
+
+    </main>
+
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer>
+
+        <p>
+
+            © 2026 Online Job Portal.
+            All rights reserved.
+
+        </p>
+
+    </footer>
+
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+
+    <script>
+
+
+        /* =========================
+           API
+        ========================== */
+
+        const API_URL =
+            "http://localhost:8080";
+
+
+        let allJobs = [];
+
+
+
+        /* =========================
+           LOGIN INFORMATION
+        ========================== */
+
+        const loggedInEmail =
+            localStorage.getItem("loggedInEmail");
+
+
+        const loggedInName =
+            localStorage.getItem("loggedInName");
+
+
+        const loggedInRole =
+            localStorage.getItem("loggedInRole");
+
+
+
+        /* =========================
+           LOGIN CHECK
+        ========================== */
+
+        if (!loggedInEmail) {
+
+            window.location.href =
+                "login.html";
+
+        }
+
+
+
+        /* =========================
+           DYNAMIC NAVIGATION
+        ========================== */
+
+        const navigationMenu =
+            document.getElementById("navigationMenu");
+
+
+        let navigationHTML = `
+
+
+            <!-- HOME -->
+
+            <li>
+
+                <a href="index.html">
+
+                    <i class="fa-solid fa-house"></i>
+
+                    Home
+
+                </a>
+
+            </li>
+
+
+
+            <!-- JOBS -->
+
+            <li>
+
+                <a href="jobs.html">
+
+                    <i class="fa-solid fa-briefcase"></i>
+
+                    Jobs
+
+                </a>
+
+            </li>
+
+
+        `;
+
+
+
+        /* =========================
+           ADMIN NAVIGATION
+        ========================== */
+
+        if (loggedInRole === "Admin") {
+
+
+            navigationHTML += `
+
+
+                <li>
+
+                    <a href="admin.html">
+
+                        <i class="fa-solid fa-user-shield"></i>
+
+                        Admin Panel
+
+                    </a>
+
+                </li>
+
+
+            `;
+
+        }
+
+
+
+        /* =========================
+           JOB SEEKER NAVIGATION
+        ========================== */
+
+        else {
+
+
+            navigationHTML += `
+
+
+                <li>
+
+                    <a href="my-applications.html">
+
+                        <i class="fa-solid fa-file-lines"></i>
+
+                        My Applications
+
+                    </a>
+
+                </li>
+
+
+
+                <li>
+
+                    <a href="profile.html">
+
+                        <i class="fa-solid fa-user"></i>
+
+                        My Profile
+
+                    </a>
+
+                </li>
+
+
+            `;
+
+        }
+
+
+
+        /* =========================
+           LOGOUT NAVIGATION
+        ========================== */
+
+        navigationHTML += `
+
+
+            <li>
+
+                <a href="#"
+                   id="logoutLink">
+
+                    <i class="fa-solid fa-right-from-bracket"></i>
+
+                    Logout
+
+                </a>
+
+            </li>
+
+
+        `;
+
+
+
+        navigationMenu.innerHTML =
+            navigationHTML;
+
+
+
+        /* =========================
+           WELCOME MESSAGE
+        ========================== */
+
+        const welcomeMessage =
+            document.getElementById(
+                "welcomeMessage"
+            );
+
+
+        if (loggedInName) {
+
+            welcomeMessage.innerHTML =
+                `Welcome, ${escapeHtml(loggedInName)} 👋`;
+
+        }
+
+
+
+        /* =========================
+           LOAD JOBS
+        ========================== */
+
+        async function loadJobs() {
+
+
+            try {
+
+
+                const response =
+                    await fetch(
+                        `${API_URL}/jobs`
+                    );
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        "Failed to load jobs"
+                    );
+
+                }
+
+
+                allJobs =
+                    await response.json();
+
+
+                createFilters(allJobs);
+
+
+                displayJobs(allJobs);
+
+
+            }
+
+
+            catch (error) {
+
+
+                console.error(error);
+
+
+                document.getElementById(
+                    "jobsContainer"
+                ).innerHTML = `
+
+
+                    <div class="empty-state">
+
+
+                        <i class="fa-solid fa-triangle-exclamation"></i>
+
+
+                        <p>
+
+                            Unable to load jobs.
+
+                        </p>
+
+
+                        <p>
+
+                            Please make sure the backend server is running.
+
+                        </p>
+
+
+                    </div>
+
+
+                `;
+
+            }
+
+        }
+
+
+
+        /* =========================
+           CREATE FILTER OPTIONS
+        ========================== */
+
+        function createFilters(jobs) {
+
+
+            const locationFilter =
+                document.getElementById(
+                    "locationFilter"
+                );
+
+
+            const experienceFilter =
+                document.getElementById(
+                    "experienceFilter"
+                );
+
+
+
+            const locations =
+                [
+                    ...new Set(
+                        jobs
+                            .map(
+                                job =>
+                                    job.location
+                            )
+                            .filter(Boolean)
+                    )
+                ];
+
+
+
+            const experiences =
+                [
+                    ...new Set(
+                        jobs
+                            .map(
+                                job =>
+                                    job.experience
+                            )
+                            .filter(Boolean)
+                    )
+                ];
+
+
+
+            locations.sort();
+
+
+            experiences.sort();
+
+
+
+            locations.forEach(
+                location => {
+
+
+                    const option =
+                        document.createElement(
+                            "option"
+                        );
+
+
+                    option.value =
+                        location;
+
+
+                    option.textContent =
+                        location;
+
+
+                    locationFilter.appendChild(
+                        option
+                    );
+
+                }
+            );
+
+
+
+            experiences.forEach(
+                experience => {
+
+
+                    const option =
+                        document.createElement(
+                            "option"
+                        );
+
+
+                    option.value =
+                        experience;
+
+
+                    option.textContent =
+                        experience;
+
+
+                    experienceFilter.appendChild(
+                        option
+                    );
+
+                }
+            );
+
+        }
+
+
+
+        /* =========================
+           DISPLAY JOBS
+        ========================== */
+
+        function displayJobs(jobs) {
+
+
+            const container =
+                document.getElementById(
+                    "jobsContainer"
+                );
+
+
+
+            if (!jobs ||
+                jobs.length === 0) {
+
+
+                container.innerHTML = `
+
+
+                    <div class="empty-state">
+
+
+                        <i class="fa-solid fa-magnifying-glass"></i>
+
+
+                        <h3>
+
+                            No Jobs Found
+
+                        </h3>
+
+
+                        <p>
+
+                            Try changing your search or filters.
+
+                        </p>
+
+
+                    </div>
+
+
+                `;
+
+
+                return;
+
+            }
+
+
+
+            container.innerHTML = "";
+
+
+
+            jobs.forEach(
+                job => {
+
+
+                    const card =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    card.className =
+                        "job-card";
+
+
+
+                    card.innerHTML = `
+
+
+                        <h3>
+
+                            <i class="fa-solid fa-briefcase"></i>
+
+                            ${escapeHtml(job.title)}
+
+                        </h3>
+
+
+
+                        <p>
+
+                            <strong>
+
+                                <i class="fa-solid fa-building"></i>
+
+                                Company:
+
+                            </strong>
+
+                            ${escapeHtml(job.company)}
+
+                        </p>
+
+
+
+                        <p>
+
+                            <strong>
+
+                                <i class="fa-solid fa-location-dot"></i>
+
+                                Location:
+
+                            </strong>
+
+                            ${escapeHtml(job.location)}
+
+                        </p>
+
+
+
+                        <p>
+
+                            <strong>
+
+                                <i class="fa-solid fa-user-clock"></i>
+
+                                Experience:
+
+                            </strong>
+
+                            ${escapeHtml(job.experience)}
+
+                        </p>
+
+
+
+                        <button
+                            class="apply-btn"
+                            data-job-id="${job.id}"
+                        >
+
+                            <i class="fa-solid fa-paper-plane"></i>
+
+                            Apply Now
+
+                        </button>
+
+
+                    `;
+
+
+
+                    container.appendChild(
+                        card
+                    );
+
+                }
+            );
+
+
+
+            /* =========================
+               APPLY BUTTONS
+            ========================== */
+
+            document
+                .querySelectorAll(
+                    ".apply-btn"
+                )
+                .forEach(
+                    button => {
+
+
+                        button.addEventListener(
+                            "click",
+                            function () {
+
+
+                                const jobId =
+                                    this.getAttribute(
+                                        "data-job-id"
+                                    );
+
+
+                                applyForJob(
+                                    jobId
+                                );
+
+                            }
+                        );
+
+                    }
+                );
+
+        }
+
+
+
+        /* =========================
+           SEARCH JOBS
+        ========================== */
+
+        function searchJobs() {
+
+
+            const searchText =
+                document.getElementById(
+                    "searchInput"
+                )
+                .value
+                .trim()
+                .toLowerCase();
+
+
+
+            const location =
+                document.getElementById(
+                    "locationFilter"
+                ).value;
+
+
+
+            const experience =
+                document.getElementById(
+                    "experienceFilter"
+                ).value;
+
+
+
+            const filteredJobs =
+                allJobs.filter(
+                    job => {
+
+
+                        const matchesSearch =
+                            !searchText ||
+                            job.title
+                                .toLowerCase()
+                                .includes(
+                                    searchText
+                                ) ||
+                            job.company
+                                .toLowerCase()
+                                .includes(
+                                    searchText
+                                );
+
+
+
+                        const matchesLocation =
+                            !location ||
+                            job.location ===
+                                location;
+
+
+
+                        const matchesExperience =
+                            !experience ||
+                            job.experience ===
+                                experience;
+
+
+
+                        return (
+                            matchesSearch &&
+                            matchesLocation &&
+                            matchesExperience
+                        );
+
+                    }
+                );
+
+
+
+            displayJobs(
+                filteredJobs
+            );
+
+        }
+
+
+
+        /* =========================
+           APPLY FOR JOB
+        ========================== */
+
+        async function applyForJob(
+            jobId
+        ) {
+
+
+            if (!loggedInEmail) {
+
+
+                window.location.href =
+                    "login.html";
+
+
+                return;
+
+            }
+
+
+
+            const job =
+                allJobs.find(
+                    item =>
+                        String(item.id) ===
+                        String(jobId)
+                );
+
+
+
+            if (!job) {
+
+
+                alert(
+                    "Job not found."
+                );
+
+
+                return;
+
+            }
+
+
+
+            const applicationData = {
+
+
+                jobId:
+                    Number(jobId),
+
+
+                applicantName:
+                    loggedInName ||
+                    "Applicant",
+
+
+                applicantEmail:
+                    loggedInEmail
+
+            };
+
+
+
+            try {
+
+
+                const response =
+                    await fetch(
+                        `${API_URL}/apply`,
+                        {
+
+                            method: "POST",
+
+
+                            headers: {
+
+                                "Content-Type":
+                                    "application/json"
+
+                            },
+
+
+                            body:
+                                JSON.stringify(
+                                    applicationData
+                                )
+
+                        }
+                    );
+
+
+
+                const data =
+                    await response.json();
+
+
+
+                if (
+                    response.ok &&
+                    data.success
+                ) {
+
+
+                    alert(
+                        "Application submitted successfully!"
+                    );
+
+
+                    loadJobs();
+
+                }
+
+
+                else {
+
+
+                    alert(
+                        data.message ||
+                        "Unable to apply for this job."
+                    );
+
+                }
+
+            }
+
+
+            catch (error) {
+
+
+                console.error(error);
+
+
+                alert(
+                    "Unable to connect to the server."
+                );
+
+            }
+
+        }
+
+
+
+        /* =========================
+           CLEAR FILTERS
+        ========================== */
+
+        document
+            .getElementById(
+                "clearBtn"
+            )
+            .addEventListener(
+                "click",
+                function () {
+
+
+                    document.getElementById(
+                        "searchInput"
+                    ).value = "";
+
+
+                    document.getElementById(
+                        "locationFilter"
+                    ).value = "";
+
+
+                    document.getElementById(
+                        "experienceFilter"
+                    ).value = "";
+
+
+                    displayJobs(
+                        allJobs
+                    );
+
+                }
+            );
+
+
+
+        /* =========================
+           SEARCH BUTTON
+        ========================== */
+
+        document
+            .getElementById(
+                "searchBtn"
+            )
+            .addEventListener(
+                "click",
+                searchJobs
+            );
+
+
+
+        /* =========================
+           ENTER KEY SEARCH
+        ========================== */
+
+        document
+            .getElementById(
+                "searchInput"
+            )
+            .addEventListener(
+                "keydown",
+                function (event) {
+
+
+                    if (
+                        event.key ===
+                        "Enter"
+                    ) {
+
+
+                        searchJobs();
+
+                    }
+
+                }
+            );
+
+
+
+        /* =========================
+           LOGOUT
+        ========================== */
+
+        document
+            .getElementById(
+                "logoutLink"
+            )
+            .addEventListener(
+                "click",
+                function (event) {
+
+
+                    event.preventDefault();
+
+
+
+                    localStorage.removeItem(
+                        "loggedInEmail"
+                    );
+
+
+                    localStorage.removeItem(
+                        "loggedInName"
+                    );
+
+
+                    localStorage.removeItem(
+                        "loggedInRole"
+                    );
+
+
+                    localStorage.removeItem(
+                        "loggedInUserId"
+                    );
+
+
+                    window.location.href =
+                        "index.html";
+
+                }
+            );
+
+
+
+        /* =========================
+           HTML ESCAPE
+        ========================== */
+
+        function escapeHtml(value) {
+
+
+            if (
+                value === null ||
+                value === undefined
+            ) {
+
+                return "";
+
+            }
+
+
+
+            return String(value)
+
+                .replace(
+                    /&/g,
+                    "&amp;"
+                )
+
+                .replace(
+                    /</g,
+                    "&lt;"
+                )
+
+                .replace(
+                    />/g,
+                    "&gt;"
+                )
+
+                .replace(
+                    /"/g,
+                    "&quot;"
+                )
+
+                .replace(
+                    /'/g,
+                    "&#039;"
+                );
+
+        }
+
+
+
+        /* =========================
+           START
+        ========================== */
+
+        loadJobs();
+
+
+    </script>
+
+
+</body>
+
+</html>

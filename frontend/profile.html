@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Profile - Online Job Portal</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- =========================
+         NAVIGATION
+    ========================== -->
+
+    <nav>
+
+        <h2>
+            <i class="fa-solid fa-briefcase"></i>
+            Online Job Portal
+        </h2>
+
+        <ul>
+
+            <li>
+                <a href="index.html">
+                    <i class="fa-solid fa-house"></i>
+                    Home
+                </a>
+            </li>
+
+            <li>
+                <a href="jobs.html">
+                    <i class="fa-solid fa-briefcase"></i>
+                    Jobs
+                </a>
+            </li>
+
+            <li>
+                <a href="my-applications.html">
+                    <i class="fa-solid fa-file-lines"></i>
+                    My Applications
+                </a>
+            </li>
+
+            <li>
+                <a href="profile.html">
+                    <i class="fa-solid fa-user"></i>
+                    My Profile
+                </a>
+            </li>
+
+            <li>
+                <a href="#" id="logoutLink">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    Logout
+                </a>
+            </li>
+
+        </ul>
+
+    </nav>
+
+
+    <!-- =========================
+         PROFILE
+    ========================== -->
+
+    <main class="container">
+
+        <div class="profile-card">
+
+            <div style="text-align: center; margin-bottom: 25px;">
+
+                <div style="
+                    width: 80px;
+                    height: 80px;
+                    margin: 0 auto 15px;
+                    border-radius: 50%;
+                    background: #eff6ff;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                ">
+
+                    <i class="fa-solid fa-user"
+                       style="font-size: 36px; color: #2563eb;">
+                    </i>
+
+                </div>
+
+                <h2>
+                    My Profile
+                </h2>
+
+                <p style="color: #64748b;">
+                    View your account information.
+                </p>
+
+            </div>
+
+
+            <!-- Name -->
+
+            <div class="profile-row">
+
+                <span class="profile-label">
+
+                    <i class="fa-solid fa-user"></i>
+                    Name
+
+                </span>
+
+                <span
+                    class="profile-value"
+                    id="profileName">
+                </span>
+
+            </div>
+
+
+            <!-- Email -->
+
+            <div class="profile-row">
+
+                <span class="profile-label">
+
+                    <i class="fa-solid fa-envelope"></i>
+                    Email
+
+                </span>
+
+                <span
+                    class="profile-value"
+                    id="profileEmail">
+                </span>
+
+            </div>
+
+
+            <!-- Role -->
+
+            <div class="profile-row">
+
+                <span class="profile-label">
+
+                    <i class="fa-solid fa-user-tag"></i>
+                    Role
+
+                </span>
+
+                <span
+                    class="profile-value"
+                    id="profileRole">
+                </span>
+
+            </div>
+
+
+            <!-- Browse Jobs -->
+
+            <div style="text-align: center; margin-top: 30px;">
+
+                <a href="jobs.html" class="btn">
+
+                    <i class="fa-solid fa-briefcase"></i>
+                    Browse Jobs
+
+                </a>
+
+            </div>
+
+        </div>
+
+    </main>
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer>
+
+        <p>
+            © 2026 Online Job Portal.
+            All rights reserved.
+        </p>
+
+    </footer>
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+
+    <script>
+
+        /* =========================
+           LOGIN CHECK
+        ========================== */
+
+        const loggedInEmail =
+            localStorage.getItem("loggedInEmail");
+
+        const loggedInName =
+            localStorage.getItem("loggedInName");
+
+        const loggedInRole =
+            localStorage.getItem("loggedInRole");
+
+
+        if (!loggedInEmail) {
+
+            window.location.href = "login.html";
+
+        }
+
+
+        /* =========================
+           DISPLAY PROFILE
+        ========================== */
+
+        document.getElementById(
+            "profileName"
+        ).textContent =
+            loggedInName || "Not available";
+
+
+        document.getElementById(
+            "profileEmail"
+        ).textContent =
+            loggedInEmail || "Not available";
+
+
+        document.getElementById(
+            "profileRole"
+        ).textContent =
+            loggedInRole || "Job Seeker";
+
+
+        /* =========================
+           LOGOUT
+        ========================== */
+
+        document
+            .getElementById("logoutLink")
+            .addEventListener(
+                "click",
+                function (event) {
+
+                    event.preventDefault();
+
+
+                    localStorage.removeItem(
+                        "loggedInEmail"
+                    );
+
+                    localStorage.removeItem(
+                        "loggedInName"
+                    );
+
+                    localStorage.removeItem(
+                        "loggedInRole"
+                    );
+
+                    localStorage.removeItem(
+                        "loggedInUserId"
+                    );
+
+
+                    window.location.href =
+                        "index.html";
+
+                }
+            );
+
+    </script>
+
+</body>
+
+</html>

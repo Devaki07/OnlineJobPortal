@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Online Job Portal</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- =========================
+         NAVIGATION
+    ========================== -->
+
+    <nav>
+
+        <h2>
+            <i class="fa-solid fa-briefcase"></i>
+            Online Job Portal
+        </h2>
+
+        <ul id="navigationMenu">
+            <!-- Navigation created by JavaScript -->
+        </ul>
+
+    </nav>
+
+
+    <!-- =========================
+         HERO SECTION
+    ========================== -->
+
+    <section class="hero">
+
+        <h1>
+            Find Your Dream Job
+        </h1>
+
+        <p>
+            Discover opportunities, apply online,
+            and take the next step in your career.
+        </p>
+
+        <a href="jobs.html" class="btn">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+            Search Jobs
+
+        </a>
+
+    </section>
+
+
+    <!-- =========================
+         FEATURES
+    ========================== -->
+
+    <section class="features">
+
+        <div class="feature-card">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+
+            <h3>
+                Find Jobs
+            </h3>
+
+            <p>
+                Search and explore available job
+                opportunities that match your skills.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <i class="fa-solid fa-paper-plane"></i>
+
+            <h3>
+                Apply Online
+            </h3>
+
+            <p>
+                Apply for suitable jobs quickly
+                and keep track of your applications.
+            </p>
+
+        </div>
+
+
+        <div class="feature-card">
+
+            <i class="fa-solid fa-chart-line"></i>
+
+            <h3>
+                Build Your Career
+            </h3>
+
+            <p>
+                Find opportunities that help you
+                grow your skills and career.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer>
+
+        <p>
+            © 2026 Online Job Portal.
+            All rights reserved.
+        </p>
+
+    </footer>
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+
+    <script>
+
+        const navigationMenu =
+            document.getElementById("navigationMenu");
+
+
+        /*
+         * Get login information
+         */
+
+        const loggedInEmail =
+            localStorage.getItem("loggedInEmail");
+
+        const loggedInRole =
+            localStorage.getItem("loggedInRole");
+
+
+        /* =========================
+           LOGGED-IN USER
+        ========================== */
+
+        if (loggedInEmail) {
+
+            /*
+             * Common navigation
+             */
+
+            let navigationHTML = `
+
+                <li>
+                    <a href="index.html">
+                        <i class="fa-solid fa-house"></i>
+                        Home
+                    </a>
+                </li>
+
+                <li>
+                    <a href="jobs.html">
+                        <i class="fa-solid fa-briefcase"></i>
+                        Jobs
+                    </a>
+                </li>
+            `;
+
+
+            /*
+             * Admin navigation
+             */
+
+            if (loggedInRole === "Admin") {
+
+                navigationHTML += `
+
+                    <li>
+                        <a href="admin.html">
+                            <i class="fa-solid fa-user-shield"></i>
+                            Admin Panel
+                        </a>
+                    </li>
+
+                `;
+
+            }
+
+
+            /*
+             * Job Seeker navigation
+             */
+
+            else {
+
+                navigationHTML += `
+
+                    <li>
+                        <a href="my-applications.html">
+                            <i class="fa-solid fa-file-lines"></i>
+                            My Applications
+                        </a>
+                    </li>
+
+                    <li>
+                        <a href="profile.html">
+                            <i class="fa-solid fa-user"></i>
+                            My Profile
+                        </a>
+                    </li>
+
+                `;
+
+            }
+
+
+            /*
+             * Logout
+             */
+
+            navigationHTML += `
+
+                <li>
+                    <a href="#" id="logoutLink">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        Logout
+                    </a>
+                </li>
+
+            `;
+
+
+            navigationMenu.innerHTML =
+                navigationHTML;
+
+
+            /* =========================
+               LOGOUT
+            ========================== */
+
+            document
+                .getElementById("logoutLink")
+                .addEventListener(
+                    "click",
+                    function (event) {
+
+                        event.preventDefault();
+
+
+                        localStorage.removeItem(
+                            "loggedInEmail"
+                        );
+
+                        localStorage.removeItem(
+                            "loggedInName"
+                        );
+
+                        localStorage.removeItem(
+                            "loggedInRole"
+                        );
+
+                        localStorage.removeItem(
+                            "loggedInUserId"
+                        );
+
+
+                        window.location.href =
+                            "index.html";
+
+                    }
+                );
+
+        }
+
+
+        /* =========================
+           LOGGED-OUT USER
+        ========================== */
+
+        else {
+
+            navigationMenu.innerHTML = `
+
+                <li>
+                    <a href="index.html">
+                        <i class="fa-solid fa-house"></i>
+                        Home
+                    </a>
+                </li>
+
+                <li>
+                    <a href="jobs.html">
+                        <i class="fa-solid fa-briefcase"></i>
+                        Jobs
+                    </a>
+                </li>
+
+                <li>
+                    <a href="login.html">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                        Login
+                    </a>
+                </li>
+
+                <li>
+                    <a href="register.html">
+                        <i class="fa-solid fa-user-plus"></i>
+                        Register
+                    </a>
+                </li>
+
+            `;
+
+        }
+
+    </script>
+
+</body>
+
+</html>

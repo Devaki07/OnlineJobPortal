@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Panel - Online Job Portal</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+    .admin-page {
+        padding: 40px 20px;
+        min-height: 75vh;
+    }
+
+    .admin-container {
+        max-width: 1200px;
+        margin: auto;
+    }
+
+    .admin-header {
+        margin-bottom: 30px;
+    }
+
+    .admin-header h1 {
+        margin-bottom: 8px;
+    }
+
+    .admin-header p {
+        color: #666;
+    }
+
+    .admin-stats {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 18px;
+        margin-bottom: 35px;
+    }
+
+    .admin-stat {
+        background: white;
+        border-radius: 12px;
+        padding: 22px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        border: 1px solid #eee;
+    }
+
+    .admin-stat h3 {
+        margin: 0 0 10px;
+        font-size: 14px;
+        color: #666;
+    }
+
+    .admin-stat .number {
+        font-size: 28px;
+        font-weight: 700;
+        color: #2563eb;
+    }
+
+    .applications-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .applications-header h2 {
+        margin: 0;
+    }
+
+    .refresh-btn {
+        border: none;
+        background: #2563eb;
+        color: white;
+        padding: 10px 18px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .refresh-btn:hover {
+        background: #1d4ed8;
+    }
+
+    .admin-applications {
+        display: grid;
+        gap: 20px;
+    }
+
+    .admin-application-card {
+        background: white;
+        border-radius: 14px;
+        padding: 24px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+    }
+
+    .application-top {
+        margin-bottom: 20px;
+    }
+
+    .application-top h3 {
+        margin: 0 0 6px;
+        color: #111827;
+    }
+
+    .application-id {
+        color: #6b7280;
+        font-size: 13px;
+    }
+
+    .application-details {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .detail-box {
+        background: #f8fafc;
+        padding: 14px;
+        border-radius: 9px;
+    }
+
+    .detail-label {
+        display: block;
+        font-size: 12px;
+        color: #6b7280;
+        margin-bottom: 5px;
+        font-weight: 600;
+    }
+
+    .detail-value {
+        color: #111827;
+        font-size: 14px;
+        word-break: break-word;
+    }
+
+    .status-section {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding-top: 18px;
+        border-top: 1px solid #eee;
+    }
+
+    .status-section label {
+        font-weight: 600;
+        font-size: 14px;
+    }
+
+    .status-select {
+        padding: 9px 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 7px;
+        background: white;
+        font-size: 14px;
+        cursor: pointer;
+    }
+
+    .save-status-btn {
+        border: none;
+        background: #16a34a;
+        color: white;
+        padding: 9px 16px;
+        border-radius: 7px;
+        cursor: pointer;
+        font-size: 14px;
+    }
+
+    .save-status-btn:hover {
+        background: #15803d;
+    }
+
+    .save-status-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .status-message {
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .success-message {
+        color: #16a34a;
+    }
+
+    .error-message {
+        color: #dc2626;
+    }
+
+    .admin-message {
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        text-align: center;
+        color: #666;
+        border: 1px solid #eee;
+    }
+
+    @media (max-width: 1000px) {
+        .admin-stats {
+            grid-template-columns: repeat(3, 1fr);
+        }
+    }
+    
+    
+    @media (max-width: 700px) {
+        .admin-page {
+            padding: 25px 15px;
+        }
+
+        .admin-stats {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .application-details {
+            grid-template-columns: 1fr;
+        }
+
+        .status-section {
+            flex-wrap: wrap;
+        }
+
+        .applications-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 12px;
+        }
+    }
+
+    @media (max-width: 450px) {
+        .admin-stats {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+</head>
+
+<body>
+
+<nav class="navbar">
+
+    <div class="nav-container">
+
+        <a href="index.html" class="logo">
+            Online Job Portal
+        </a>
+
+        <div class="nav-links">
+
+            <a href="index.html">Home</a>
+
+            <a href="jobs.html">Jobs</a>
+
+            <a href="admin.html" class="active">
+                Admin Panel
+            </a>
+
+            <a href="#" onclick="logout()">
+                Logout
+            </a>
+
+        </div>
+
+    </div>
+
+</nav>
+
+
+<main class="admin-page">
+
+    <div class="admin-container">
+
+        <div class="admin-header">
+
+            <h1>Admin Dashboard</h1>
+
+            <p>
+                Manage job applications and update applicant status.
+            </p>
+
+        </div>
+
+
+        <div class="admin-stats">
+
+            <div class="admin-stat">
+                <h3>Total Applications</h3>
+                <div class="number" id="totalCount">0</div>
+            </div>
+
+            <div class="admin-stat">
+                <h3>Applied</h3>
+                <div class="number" id="appliedCount">0</div>
+            </div>
+
+            <div class="admin-stat">
+                <h3>Under Review</h3>
+                <div class="number" id="reviewCount">0</div>
+            </div>
+
+            <div class="admin-stat">
+                <h3>Shortlisted</h3>
+                <div class="number" id="shortlistedCount">0</div>
+            </div>
+
+            <div class="admin-stat">
+                <h3>Selected</h3>
+                <div class="number" id="selectedCount">0</div>
+            </div>
+
+        </div>
+
+
+        <div class="applications-header">
+
+            <h2>All Applications</h2>
+
+            <button
+                class="refresh-btn"
+                onclick="loadApplications()">
+                🔄 Refresh
+            </button>
+
+        </div>
+
+
+        <div
+            id="applicationsContainer"
+            class="admin-applications">
+
+            <div class="admin-message">
+                Loading applications...
+            </div>
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<footer class="footer">
+
+    <p>
+        © 2026 Online Job Portal. All rights reserved.
+    </p>
+
+</footer>
+
+
+<script>
+
+    const API_URL = "http://localhost:8080";
+
+    const adminEmail =
+        localStorage.getItem("loggedInEmail");
+
+    const adminRole =
+        localStorage.getItem("loggedInRole");
+
+
+    // =========================
+    // ADMIN PROTECTION
+    // =========================
+
+    if (
+        !adminEmail ||
+        adminRole !== "Admin"
+    ) {
+
+        alert("Admin access required.");
+
+        window.location.href = "login.html";
+
+    }
+
+
+    // =========================
+    // LOAD APPLICATIONS
+    // =========================
+
+    async function loadApplications() {
+
+        const container =
+            document.getElementById(
+                "applicationsContainer"
+            );
+
+        container.innerHTML = `
+            <div class="admin-message">
+                Loading applications...
+            </div>
+        `;
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `${API_URL}/admin/applications?email=${encodeURIComponent(adminEmail)}`
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Server returned an error."
+                );
+
+            }
+
+
+            const data =
+                await response.json();
+
+
+            /*
+             * Backend currently returns:
+             *
+             * [
+             *   {...},
+             *   {...}
+             * ]
+             *
+             * So data itself is the applications array.
+             */
+
+            const applications =
+                Array.isArray(data)
+                    ? data
+                    : data.applications;
+
+
+            if (!Array.isArray(applications)) {
+
+                throw new Error(
+                    "Invalid applications response."
+                );
+
+            }
+
+
+            updateStatistics(
+                applications
+            );
+
+
+            if (
+                applications.length === 0
+            ) {
+
+                container.innerHTML = `
+                    <div class="admin-message">
+                        No applications found.
+                    </div>
+                `;
+
+                return;
+
+            }
+
+
+            container.innerHTML =
+                applications
+                    .map(
+                        application =>
+                            createApplicationCard(
+                                application
+                            )
+                    )
+                    .join("");
+
+
+        } catch (error) {
+
+            console.error(
+                "Admin application error:",
+                error
+            );
+
+
+            container.innerHTML = `
+                <div class="admin-message">
+
+                    <p>
+                        Unable to load applications.
+                    </p>
+
+                    <p>
+                        ${escapeHtml(error.message)}
+                    </p>
+
+                </div>
+            `;
+
+        }
+
+    }
+
+
+    // =========================
+    // UPDATE STATISTICS
+    // =========================
+
+    function updateStatistics(
+        applications
+    ) {
+
+        let applied = 0;
+
+        let review = 0;
+
+        let shortlisted = 0;
+
+        let selected = 0;
+
+
+        applications.forEach(
+            application => {
+
+                const status =
+                    application.status;
+
+
+                if (
+                    status === "Applied"
+                ) {
+
+                    applied++;
+
+                }
+
+                else if (
+                    status === "Under Review"
+                ) {
+
+                    review++;
+
+                }
+
+                else if (
+                    status === "Shortlisted"
+                ) {
+
+                    shortlisted++;
+
+                }
+
+                else if (
+                    status === "Selected"
+                ) {
+
+                    selected++;
+
+                }
+
+            }
+        );
+
+
+        document.getElementById(
+            "totalCount"
+        ).textContent =
+            applications.length;
+
+
+        document.getElementById(
+            "appliedCount"
+        ).textContent =
+            applied;
+
+
+        document.getElementById(
+            "reviewCount"
+        ).textContent =
+            review;
+
+
+        document.getElementById(
+            "shortlistedCount"
+        ).textContent =
+            shortlisted;
+
+
+        document.getElementById(
+            "selectedCount"
+        ).textContent =
+            selected;
+
+    }
+
+
+    // =========================
+    // CREATE APPLICATION CARD
+    // =========================
+
+    function createApplicationCard(
+        application
+    ) {
+
+        const status =
+            application.status ||
+            "Applied";
+
+
+        return `
+
+            <div
+                class="admin-application-card"
+                id="application-${application.id}">
+
+
+                <div class="application-top">
+
+                    <h3>
+                        ${escapeHtml(
+                            application.applicantName
+                        )}
+                    </h3>
+
+                    <div class="application-id">
+
+                        Application ID:
+                        #${application.id}
+
+                    </div>
+
+                </div>
+
+
+                <div class="application-details">
+
+
+                    <div class="detail-box">
+
+                        <span class="detail-label">
+                            Applicant Email
+                        </span>
+
+                        <span class="detail-value">
+                            ${escapeHtml(
+                                application.applicantEmail
+                            )}
+                        </span>
+
+                    </div>
+
+
+                    <div class="detail-box">
+
+                        <span class="detail-label">
+                            Job Title
+                        </span>
+
+                        <span class="detail-value">
+                            ${escapeHtml(
+                                application.title
+                            )}
+                        </span>
+
+                    </div>
+
+
+                    <div class="detail-box">
+
+                        <span class="detail-label">
+                            Company
+                        </span>
+
+                        <span class="detail-value">
+                            ${escapeHtml(
+                                application.company
+                            )}
+                        </span>
+
+                    </div>
+
+
+                    <div class="detail-box">
+
+                        <span class="detail-label">
+                            Location
+                        </span>
+
+                        <span class="detail-value">
+                            ${escapeHtml(
+                                application.location
+                            )}
+                        </span>
+
+                    </div>
+
+
+                    <div class="detail-box">
+
+                        <span class="detail-label">
+                            Experience
+                        </span>
+
+                        <span class="detail-value">
+                            ${escapeHtml(
+                                application.experience
+                            )}
+                        </span>
+
+                    </div>
+
+
+                    <div class="detail-box">
+
+                        <span class="detail-label">
+                            Applied At
+                        </span>
+
+                        <span class="detail-value">
+                            ${escapeHtml(
+                                application.appliedAt
+                            )}
+                        </span>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="status-section">
+
+
+                    <label>
+                        Status:
+                    </label>
+
+
+                    <select
+                        class="status-select"
+                        id="status-${application.id}">
+
+                        <option
+                            value="Applied"
+                            ${status === "Applied" ? "selected" : ""}>
+                            Applied
+                        </option>
+
+                        <option
+                            value="Under Review"
+                            ${status === "Under Review" ? "selected" : ""}>
+                            Under Review
+                        </option>
+
+                        <option
+                            value="Shortlisted"
+                            ${status === "Shortlisted" ? "selected" : ""}>
+                            Shortlisted
+                        </option>
+
+                        <option
+                            value="Selected"
+                            ${status === "Selected" ? "selected" : ""}>
+                            Selected
+                        </option>
+
+                        <option
+                            value="Rejected"
+                            ${status === "Rejected" ? "selected" : ""}>
+                            Rejected
+                        </option>
+
+                    </select>
+
+
+                    <button
+                        class="save-status-btn"
+                        onclick="updateStatus(${application.id})">
+
+                        Save Status
+
+                    </button>
+
+
+                    <span
+                        id="message-${application.id}"
+                        class="status-message">
+                    </span>
+
+
+                </div>
+
+
+            </div>
+
+        `;
+
+    }
+
+
+    // =========================
+    // UPDATE STATUS
+    // =========================
+
+    async function updateStatus(
+        applicationId
+    ) {
+
+        const select =
+            document.getElementById(
+                `status-${applicationId}`
+            );
+
+
+        const message =
+            document.getElementById(
+                `message-${applicationId}`
+            );
+
+
+        const button =
+            document.querySelector(
+                `#application-${applicationId} .save-status-btn`
+            );
+
+
+        const status =
+            select.value;
+
+
+        message.textContent =
+            "Updating...";
+
+
+        message.className =
+            "status-message";
+
+
+        button.disabled = true;
+
+
+        try {
+
+            const response =
+                await fetch(
+                    `${API_URL}/admin/status`,
+                    {
+
+                        method: "POST",
+
+                        headers: {
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body: JSON.stringify({
+
+                            applicationId:
+                                applicationId,
+
+                            adminEmail:
+                                adminEmail,
+
+                            status:
+                                status
+
+                        })
+
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if (
+                !response.ok ||
+                !data.success
+            ) {
+
+                throw new Error(
+                    data.message ||
+                    "Unable to update status."
+                );
+
+            }
+
+
+            message.textContent =
+                "✓ Status updated";
+
+
+            message.className =
+                "status-message success-message";
+
+
+            setTimeout(
+                () => {
+                    loadApplications();
+                },
+                700
+            );
+
+
+        } catch (error) {
+
+            console.error(error);
+
+
+            message.textContent =
+                "Update failed";
+
+
+            message.className =
+                "status-message error-message";
+
+        }
+
+
+        finally {
+
+            button.disabled = false;
+
+        }
+
+    }
+
+
+    // =========================
+    // ESCAPE HTML
+    // =========================
+
+    function escapeHtml(
+        value
+    ) {
+
+        if (
+            value === null ||
+            value === undefined
+        ) {
+
+            return "";
+
+        }
+
+
+        return String(value)
+
+            .replace(
+                /&/g,
+                "&amp;"
+            )
+
+            .replace(
+                /</g,
+                "&lt;"
+            )
+
+            .replace(
+                />/g,
+                "&gt;"
+            )
+
+            .replace(
+                /"/g,
+                "&quot;"
+            )
+
+            .replace(
+                /'/g,
+                "&#039;"
+            );
+
+    }
+
+
+    // =========================
+    // LOGOUT
+    // =========================
+
+    function logout() {
+
+        localStorage.removeItem(
+            "loggedInEmail"
+        );
+
+        localStorage.removeItem(
+            "loggedInName"
+        );
+
+        localStorage.removeItem(
+            "loggedInRole"
+        );
+
+        localStorage.removeItem(
+            "loggedInUserId"
+        );
+
+
+        window.location.href =
+            "index.html";
+
+    }
+
+
+    // =========================
+    // INITIAL LOAD
+    // =========================
+
+    loadApplications();
+
+</script>
+
+</body>
+
+</html>

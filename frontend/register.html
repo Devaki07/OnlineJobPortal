@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Register - Online Job Portal</title>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- =========================
+         NAVIGATION
+    ========================== -->
+
+    <nav>
+
+        <h2>
+            <i class="fa-solid fa-briefcase"></i>
+            Online Job Portal
+        </h2>
+
+        <ul>
+
+            <li>
+                <a href="index.html">
+                    <i class="fa-solid fa-house"></i>
+                    Home
+                </a>
+            </li>
+
+            <li>
+                <a href="jobs.html">
+                    <i class="fa-solid fa-briefcase"></i>
+                    Jobs
+                </a>
+            </li>
+
+            <li>
+                <a href="login.html">
+                    <i class="fa-solid fa-right-to-bracket"></i>
+                    Login
+                </a>
+            </li>
+
+            <li>
+                <a href="register.html">
+                    <i class="fa-solid fa-user-plus"></i>
+                    Register
+                </a>
+            </li>
+
+        </ul>
+
+    </nav>
+
+
+    <!-- =========================
+         REGISTER FORM
+    ========================== -->
+
+    <main class="form-container">
+
+        <h2>
+            <i class="fa-solid fa-user-plus"></i>
+            Create Account
+        </h2>
+
+        <p>
+            Register to search and apply for jobs.
+        </p>
+
+
+        <form id="registerForm">
+
+            <!-- Name -->
+
+            <div class="form-group">
+
+                <label for="name">
+                    <i class="fa-solid fa-user"></i>
+                    Full Name
+                </label>
+
+                <input
+                    type="text"
+                    id="name"
+                    placeholder="Enter your full name"
+                    required
+                >
+
+            </div>
+
+
+            <!-- Email -->
+
+            <div class="form-group">
+
+                <label for="email">
+                    <i class="fa-solid fa-envelope"></i>
+                    Email
+                </label>
+
+                <input
+                    type="email"
+                    id="email"
+                    placeholder="Enter your email"
+                    required
+                >
+
+            </div>
+
+
+            <!-- Password -->
+
+            <div class="form-group">
+
+                <label for="password">
+                    <i class="fa-solid fa-lock"></i>
+                    Password
+                </label>
+
+                <input
+                    type="password"
+                    id="password"
+                    placeholder="Create a password"
+                    required
+                    minlength="6"
+                >
+
+            </div>
+
+
+            <!-- Role -->
+
+            <div class="form-group">
+
+                <label for="role">
+                    <i class="fa-solid fa-user-tag"></i>
+                    Account Type
+                </label>
+
+                <select id="role" required>
+
+                    <option value="">
+                        Select account type
+                    </option>
+
+                    <option value="Job Seeker">
+                        Job Seeker
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- Register button -->
+
+            <button type="submit">
+
+                <i class="fa-solid fa-user-plus"></i>
+                Create Account
+
+            </button>
+
+        </form>
+
+
+        <!-- Message -->
+
+        <div id="message"></div>
+
+
+        <!-- Login -->
+
+        <p style="margin-top: 20px;">
+
+            Already have an account?
+
+            <a href="login.html">
+                Login here
+            </a>
+
+        </p>
+
+    </main>
+
+
+    <!-- =========================
+         FOOTER
+    ========================== -->
+
+    <footer>
+
+        <p>
+            © 2026 Online Job Portal.
+            All rights reserved.
+        </p>
+
+    </footer>
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================== -->
+
+    <script>
+
+        const API_URL = "http://localhost:8080";
+
+
+        document
+            .getElementById("registerForm")
+            .addEventListener(
+                "submit",
+                async function (event) {
+
+                    event.preventDefault();
+
+
+                    const name =
+                        document
+                            .getElementById("name")
+                            .value
+                            .trim();
+
+
+                    const email =
+                        document
+                            .getElementById("email")
+                            .value
+                            .trim();
+
+
+                    const password =
+                        document
+                            .getElementById("password")
+                            .value;
+
+
+                    const role =
+                        document
+                            .getElementById("role")
+                            .value;
+
+
+                    const message =
+                        document
+                            .getElementById("message");
+
+
+                    message.className = "";
+                    message.textContent = "";
+
+
+                    if (!name ||
+                        !email ||
+                        !password ||
+                        !role) {
+
+                        message.className =
+                            "message error";
+
+                        message.textContent =
+                            "Please fill in all fields.";
+
+                        return;
+
+                    }
+
+
+                    if (password.length < 6) {
+
+                        message.className =
+                            "message error";
+
+                        message.textContent =
+                            "Password must contain at least 6 characters.";
+
+                        return;
+
+                    }
+
+
+                    try {
+
+                        const response =
+                            await fetch(
+                                `${API_URL}/register`,
+                                {
+                                    method: "POST",
+
+                                    headers: {
+                                        "Content-Type":
+                                            "application/json"
+                                    },
+
+                                    body:
+                                        JSON.stringify({
+                                            name: name,
+                                            email: email,
+                                            password: password,
+                                            role: role
+                                        })
+                                }
+                            );
+
+
+                        const data =
+                            await response.json();
+
+
+                        if (response.ok &&
+                            data.success) {
+
+                            message.className =
+                                "message success";
+
+                            message.textContent =
+                                "Registration successful! Redirecting to login...";
+
+
+                            document
+                                .getElementById(
+                                    "registerForm"
+                                )
+                                .reset();
+
+
+                            setTimeout(
+                                function () {
+
+                                    window.location.href =
+                                        "login.html";
+
+                                },
+                                1200
+                            );
+
+
+                        } else {
+
+                            message.className =
+                                "message error";
+
+                            message.textContent =
+                                data.message ||
+                                "Registration failed. Please try again.";
+
+                        }
+
+
+                    } catch (error) {
+
+                        console.error(error);
+
+                        message.className =
+                            "message error";
+
+                        message.textContent =
+                            "Unable to connect to the server. Please try again.";
+
+                    }
+
+                }
+            );
+
+    </script>
+
+</body>
+
+</html>
